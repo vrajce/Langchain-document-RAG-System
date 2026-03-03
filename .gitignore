@@ -1,3 +1,15 @@
+# Folders
 docs/
-
 venv/
+faiss_index_react/
+__pycache__/
+
+# Files
+.env
+insert.py
+retriever.py
+bot.py
+ingest.py
+
+# Temporary files
+final_chunks.txt

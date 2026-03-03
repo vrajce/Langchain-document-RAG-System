@@ -1,7 +1,11 @@
-from typing import Any, final
 from langchain_community.document_loaders import DirectoryLoader , TextLoader , UnstructuredMarkdownLoader
 from langchain_community.document_loaders.base_o365 import CHUNK_SIZE
 from langchain_text_splitters import MarkdownHeaderTextSplitter , RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEndpointEmbeddings , HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 loader = DirectoryLoader(
@@ -59,7 +63,12 @@ secondarySplitter = RecursiveCharacterTextSplitter(
 final_splitted = secondarySplitter.split_documents(md_chunks)
 print(f"✅ Final Production Chunks: {len(final_splitted)}")
 
+embedding = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
 
-with open('final_chunks.txt' , 'w' , encoding='UTF-8') as f:
-    for doc in final_splitted:
-        f.write(doc.page_content + '\n\n')
+vectorstore = FAISS.from_documents(final_splitted, embedding)
+Db_name = 'faiss_index_react'
+vectorstore.save_local(
+    Db_name 
+)
